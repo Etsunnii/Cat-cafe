@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="ru" translate="no">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="google" content="notranslate" />
+    <title>МУРМЯУ — котокафе</title>
+    <style>
+      html.scroll-restore-pending,
+      html.scroll-restore-pending body {
+        scroll-behavior: auto !important;
+      }
+
+      html.scroll-restore-pending body {
+        visibility: hidden;
+      }
+    </style>
+    <script>
+      (() => {
+        const key = `murmiau-scroll-position:${window.location.pathname}`;
+        const legacyKey = "murmiau-scroll-position";
+        const savedPosition = Number(
+          window.sessionStorage.getItem(key) ??
+            window.sessionStorage.getItem(legacyKey)
+        );
+
+        if ("scrollRestoration" in window.history) {
+          window.history.scrollRestoration = "manual";
+        }
+
+        if (Number.isFinite(savedPosition) && savedPosition > 0) {
+          window.__MURMIAU_RESTORE_SCROLL__ = savedPosition;
+          document.documentElement.classList.add("scroll-restore-pending");
+        }
+
+        const saveScrollPosition = () => {
+          window.sessionStorage.setItem(key, String(window.scrollY));
+          window.sessionStorage.setItem(legacyKey, String(window.scrollY));
+        };
+
+        window.addEventListener("pagehide", saveScrollPosition);
+        window.addEventListener("beforeunload", saveScrollPosition);
+      })();
+    </script>
+  </head>
+  <body class="notranslate">
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+</html>
